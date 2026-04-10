@@ -1,0 +1,23 @@
+﻿Do oddania:
+  (utworzyć katalog z numerem ćwiczenia i nazwiskami np. lab1_Kowalski_Nowak, 
+   nazwiska w kolejności alfabetycznej, nie pakować)
+
+a) Kod źródłowy w C++, kompilujący się w DEV-C++ lub C++ Builder 6.0 Personal
+b) kod.exe, suma czasów działania dla wszystkich instancji nie więcej niż 1s 
+   na PC z zegarem 2GHz
+c) pliki wynikowe
+d) Sprawozdanie:
+
+   1. Imię Nazwisko osób należących do grupy
+   2. Termin oddania + okres spóźnienia
+   3. Numer ćwiczenia
+   4. Suma długości uszeregowań i każdego z osobna (np. 100+200+300=600)
+   5. Sugerowana ocena z uwzględnieniem spóźnienia według tabeli w rpq.data.txt
+
+Każdy rozpoczęty tydzień obniża ocenę o 0.5 (spóźnienie nie obniża poniżej 3.0)
+
+Kryterium Oceny:
+
+plagiat lub brak znajomości oddawanego kodu: ocena 0.0 (bez możliwości poprawy)
+program źle obliczający lub nie obliczający wartość Cmax: ocena 2.0
+

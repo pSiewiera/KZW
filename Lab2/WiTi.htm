@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!--
+================================================================================
+  PROJEKT: problem 1||sum WiTi (witi)
+  autor M. Makuchowski
+  data 29.03.2026
+================================================================================
+  ARCHITEKTURA I STRUKTURA PROJEKTU
+
+  System został zbudowany w oparciu o architekturę jednokierunkowego
+  przepływu danych (zgodnie z modelem Model-View-Presenter), co gwarantuje
+  całkowitą separację logiki od interfejsu.
+================================================================================
+MAPA ZALEŻNOŚCI I PRZEPŁYW DANYCH (ARCHITEKTURA SYSTEMU)
+
+LEGENDA:
+(1) ===> (2)  Odwołanie statyczne (ścisłe). Kod (1) jawnie wywołuje kod (2).
+              Programista musi znać API modułu wskazywanego w czasie pisania.
+(1) ~~~> (2)  Odwołanie dynamiczne (luźne). Kod (1) deleguje wykonanie (np.
+              przez zdarzenia/callbacki), nie wiedząc na etapie pisania,
+              jaki moduł (2) to obsłuży.
+
++ - - - - - - - +          + - - - - - - - - +
+|               |  ===>    |   index.html    | (Kontroler modyfikuje DOM / podpina Eventy)
+|               |  <~~~    |                 | (UI wyzwala zdarzenia)
+|    main.js    |          + - - - - - - - - +
+|  (Kontroler)  |  ===>    |    view.js      | (Aktualizacja UI)
+|               |  <~~~    |                 | (callBack dla zmiany danych lub kolejności)
+|               |          + - - - - - - - - +
+|               |  ===>    |    engine.js    | (Logika / Model / Obliczenia WiTi)
++ - - - - - - - +          + - - - - - - - - +
+
+================================================================================
+  MAPA PLIKÓW I ODPOWIEDZIALNOŚCI
+
+  [ UI / SZKIELET ]
+  index.html : Struktura aplikacji. Deklaruje siatkę (CSS Grid) kontenerów:
+               Dane, Rozwiązanie, Ocena, Wizualizacja oraz Notatki.
+  style.css  : Wizualny Monolit. Definiuje paletę "Sage Tech" i techniczny
+               charakter interfejsu. Zapewnia sztywne wymiary okna aplikacji,
+               ułatwiając precyzyjne rozmieszczenie elementów Canvas.
+
+  [ KONTROLER (Dyrygent / Mediator) ]
+  main.js    : Główny menedżer przepływu.
+               - Inicjalizuje silnik (engine.js) i komponenty widoku (view.js).
+               - Nasłuchuje zmian w danych wejściowych i kolejności zadań.
+               - Po każdej zmianie pobiera przeliczone dane z silnika
+                 i dystrybuuje je do odpowiednich sekcji widoku.
+
+  [ MODEL (Czysta Logika) ]
+  engine.js  : Serce obliczeniowe. Skupia się wyłącznie na matematyce problemu:
+               - Wyznacza momenty zakończenia zadań (Ci).
+               - Oblicza spóźnienia (Ti) oraz sumaryczną karę (wi * Ti).
+               - Odpowiada za walidację poprawności permutacji (usuwanie duplikatów).
+
+  [ WIDOKI (Dumb Components) ]
+  view.js    : Odpowiada za całą warstwę prezentacji i translację danych:
+               - Obsługuje Canvas (Gantt): rysuje zadania z przezroczystością,
+                 osie czasu, etykiety "t" oraz terminy "d".
+               - Implementuje Drag & Drop (zmiana kolejności zadań myszką).
+               - Generuje dynamiczne notatki z obliczeniami, kolorując wyniki
+                 w zależności od spóźnienia zadania.
+
+  *(Wszystkie elementy widoku nie posiadają własnej logiki biznesowej –
+  renderują jedynie stan narzucony przez kontroler).*
+================================================================================
+-->
+<html lang="pl"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>WiTi</title>
+    <link rel="stylesheet" href="WiTi_files/style.css">
+</head>
+<body>
+
+  <div id="app" style="transform: scale(0.940496); transform-origin: center center 0px;">
+    <div id="appAuthor">projekt i wykonanie: M. Makuchowski</div>
+    <div id="appTitle">Problem 1||∑w<sub>i</sub>T<sub>i</sub></div>
+    <!-- panel 1 -->
+    <div class="appPanel" id="appPanel1">
+      <!-- interaktywne dane instancji -->
+      <div class="appBox" id="appBoxData">
+        <div class="appBoxHead">Dane</div>
+        <div class="appBoxBody" id="boxData">
+       <div id="boxDataEditorContainer">
+         <textarea id="boxDataGutter" readonly="readonly" tabindex="-1">n
+A
+B
+C
+D
+</textarea>
+         <textarea id="boxDataEdit" spellcheck="false" placeholder="n
+r p q...">4
+  2   3   4
+  4   3   3
+  1   4   5
+  3   2   2</textarea>
+       </div>
+       <button id="boxDataBtnUpdate" tabindex="-1">Zatwierdź dane</button>
+       <div class="appBoxInfo">Format: n, potem linie: p w d</div>
+     </div>
+      </div>
+      <!-- interaktywne rozwiązanie -->
+      <div class="appBox" id="appBoxSolution">
+        <div class="appBoxHead">Rozwiązanie</div>
+        <div class="appBoxBody" id="boxSolution">
+       <input type="text" id="boxSolutionEdit" placeholder="A, B, C lub 1, 2, 3" value="A, B, C, D">
+       <div class="appBoxInfo">litery lub numery od 1</div></div>
+      </div>
+      <!-- pasywna ocena rozwiązania -->
+      <div class="appBox" id="appBoxResult">
+        <div class="appBoxHead">Ocena</div>
+        <div class="appBoxBody" id="boxResult">
+             <div id="boxResultTxt">33</div>
+             <div class="appBoxInfo">∑w<sub>i</sub>T<sub>i</sub></div>
+         </div>
+      </div>
+    </div>
+
+    <!-- panel 2 -->
+    <div class="appPanel" id="appPanel2">
+      <!-- interaktywna wizualizacja -->
+      <div class="appBox" id="appBoxDraft">
+        <div class="appBoxHead">Wizualizacja</div>
+        <div class="appBoxBody" id="boxDraft"><canvas id="drafCanvas" width="886" height="276"></canvas></div>
+      </div>
+      <!-- pasywne notatki z obliczeniami -->
+      <div class="appBox" id="appBoxNotes">
+        <div class="appBoxHead">Obliczenia</div>
+        <div class="appBoxBody" id="boxNotes">
+            <table id="boxNotesTable">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>p</th><th>w</th><th>d</th>
+                        <th>S</th>
+                        <th>C = S + p</th>
+                        <th>T = max(0, C - d)</th>
+                        <th>wT = w * T</th>
+                    </tr>
+                </thead>
+                <tbody id="notes-body"><tr>
+                <td class="col-id">A</td>
+                <td class="col-p">2</td>
+                <td class="col-w">3</td>
+                <td class="col-d">4</td>
+                <td class="col-s">0</td>
+                <td class="col-c">0+2=2</td>
+                <td class="col-t">max(0,2-4)=0</td>
+                <td class="col-wt">3 · 0 = 0</td>
+            </tr><tr>
+                <td class="col-id">B</td>
+                <td class="col-p">4</td>
+                <td class="col-w">3</td>
+                <td class="col-d">3</td>
+                <td class="col-s">2</td>
+                <td class="col-c">2+4=6</td>
+                <td class="col-t">max(0,6-3)=3</td>
+                <td class="col-wt">3 · 3 = 9</td>
+            </tr><tr>
+                <td class="col-id">C</td>
+                <td class="col-p">1</td>
+                <td class="col-w">4</td>
+                <td class="col-d">5</td>
+                <td class="col-s">6</td>
+                <td class="col-c">6+1=7</td>
+                <td class="col-t">max(0,7-5)=2</td>
+                <td class="col-wt">4 · 2 = 8</td>
+            </tr><tr>
+                <td class="col-id">D</td>
+                <td class="col-p">3</td>
+                <td class="col-w">2</td>
+                <td class="col-d">2</td>
+                <td class="col-s">7</td>
+                <td class="col-c">7+3=10</td>
+                <td class="col-t">max(0,10-2)=8</td>
+                <td class="col-wt">2 · 8 = 16</td>
+            </tr></tbody>
+                <tfoot>
+                    <tr class="tfoot-row">
+                        <td class="td-empty"></td><td class="td-empty"></td>
+                        <td class="td-empty"></td><td class="td-empty"></td>
+                        <td class="td-empty"></td><td class="td-empty"></td>
+                        <td class="td-empty"></td>
+                        <td class="col-wt tfoot-value">
+                            Σ w<sub>i</sub>T<sub>i</sub> = <span id="stat-sumwiti">33</span>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="WiTi_files/engine.js"></script>
+  <script src="WiTi_files/view.js"></script>
+  <script src="WiTi_files/main.js"></script>
+
+
+
+</body></html>

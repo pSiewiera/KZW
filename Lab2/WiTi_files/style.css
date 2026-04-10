@@ -1,0 +1,325 @@
+/**
+ * PROJEKT: RPQ / WITI
+ * Moduł: style.css (WARSTWA WIZUALNA)
+ * Autor: M. Makuchowski
+ * Data: 31.03.2026
+ * -----------------------------------------------------------------------------
+ * ROLA: Wizualny monolit aplikacji. Definiuje estetykę "Sage Tech" oraz:
+ * - LAYOUT: Siatka CSS Grid dla paneli i boksów (Dane, Rozwiązanie, Ocena itp.).
+ * - TYPOGRAFIA: Techniczne fonty monospace dla danych wejściowych i tabel.
+ * - UI: Stylizacja interaktywnych pól tekstowych i nagłówków sekcji.
+ * - CANVAS: Definicje obszaru rysowania dla wizualizacji harmonogramu.
+ */
+
+:root {
+
+  --colorPage:     #898;
+  --colorHead:     #9a9;
+  --colorAuthor:   #676;
+  --colorBox:      #aba;
+  --colorText:     #000;
+  --colorBtn:      #9a9;
+  --colorBtnHover: #797;
+  --colorGrid:     #898;
+  --colorEdit:     #dda;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--colorPage);
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/**********************************************************
+*  Statyczne obiekty z html                               *
+*---------------------------------------------------------*
+* - #app                                                  *
+*   - #appAuthor                                          *
+*   - #appTtitle                                          *
+*   - #appPanel1, appPanel2                               *
+*     - .appBox,                                          *
+*       - .appBoxHead                                     *
+*       - .appBoxBody                                     *
+*       - .appBoxInfo                                     *
+***********************************************************/
+#app{
+  /* 1190 x 680 */
+  width: 1190px;
+  height: 680px;
+  /* (290+10+890) x (60+10+610) */
+  display: grid;
+  grid-gap: 10px;
+  grid-template-rows: 60px 610px;
+  grid-template-columns: 290px 890px;
+  /*inne*/
+  position: relative;
+  box-shadow: 0px 0px 32px 0px #000;
+}
+#appAuthor{
+  position: absolute;
+  bottom: 5px;
+  right: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--colorAuthor);
+  letter-spacing: 1.2px;
+}
+#appTitle {
+  /* 1190 x 60 */
+  grid-column: 1 / 3;
+  background-color: var(--colorHead);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier', monospace;
+  font-size: 32px;
+  font-weight: bold;
+  gap: 3px; /* Odstęp między 1 || a resztą wzoru */
+}
+#appTitle sub {
+  font-size: 0.55em;      /* Mniejszy, zgrabny indeks */
+  line-height: 0;         /* Bardzo ważne: indeks nie zajmuje miejsca w pionie */
+  vertical-align: middle; /* Ustawia 'i' względem środka litery obok */
+  position: relative;
+  bottom: -0.5em;         /* Ręcznie obniżamy 'i' pod linię w oraz T */
+  margin-left: 1px;       /* Lekki odstęp od litery */
+}
+/*** PANELE ***/
+#appPanel1 {
+  width: 290px;
+  height: 610px;
+  /* 290x(310+10+140+10+140) */
+  display: grid;
+  grid-gap: 10px;
+  grid-template-rows: 310px 140px 140px;
+}
+#appPanel2 {
+  width: 890px;
+  height: 610px;
+  /* 890 x (310+10+290) */
+  display: grid;
+  grid-gap: 10px;
+  grid-template-rows: 310px 290px;
+}
+/*** BOXY (klasy) ***/
+.appBox {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.appBoxHead {
+  height: 30px;
+  background-color: var(--colorHead);
+  display: flex; align-items: center;
+  justify-content: center;
+  font-family: 'Courier', monospace;
+  font-size: 13px;
+}
+.appBoxBody {
+  padding: 10px;
+  background-color: var(--colorBox);
+  flex-grow: 1;
+  gap: 10px;
+  /*border: 1px solid red;*/
+}
+.appBoxInfo{
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #555;
+  text-align: center;
+  margin-top: 5px;
+}
+#appBoxData    { width: 290px; height: 310px;}
+#appBoxSolution{ width: 290px; height: 140px;}
+#appBoxResult  { width: 290px; height: 140px;}
+#appBoxDraft   { width: 890px; height: 310px;}
+#appBoxNotes   { width: 890px; height: 290px;}
+
+/**********************************************************
+*  #boxData                                               *
+*---------------------------------------------------------*
+* - #boxDataEditorContainer                               *
+*   - #boxDataGutter                                      *
+*   - #boxDataEdit                                        *
+* - #boxDataBtnUpdate                                     *
+***********************************************************/
+#boxData{ width: 290px; height: 280px;}
+#boxDataEditorContainer{
+  resize: none;
+  width: 100%;
+  height: 190px;
+  display: flex;
+  border: 1px solid var(--colorGrid);
+  background-color: var(--colorBox);
+  margin-bottom: 10px;
+  overflow: hidden;
+  padding: 0;
+}
+#boxDataGutter, #boxDataEdit{
+  margin: 0;            /* Usuwa domyślne marginesy przeglądarki */
+  display: block;       /* Usuwa "światło" pod elementami inline */
+  height: 100%;         /* Rozciąga pola na pełną wysokość ramki */
+  outline: none;        /* Usuwa niebieską obwódkę przy kliknięciu */
+  border: none;
+  resize: none;
+  line-height: 1.2;
+  overflow: hidden;
+  font-family: 'Courier', monospace;
+  font-size: 16px;
+}
+#boxDataGutter {
+  width: 35px;
+  background-color: var(--colorHead);
+  color: var(--colorText);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+}
+#boxDataEdit{
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  color: var(--colorText);
+}
+#boxDataEdit:focus {
+  background-color: var(--colorEdit) !important;
+  color: #000;
+  outline: none;
+}
+#boxDataBtnUpdate {
+  height: 40px;
+  width: 100%;
+  padding: 10px 4px;
+  background: var(--colorBtn);
+  border: 1px solid var(--colorGrid);
+  color: var(--colorText);
+  cursor: pointer;
+  font-family: "Courier", monospace;
+  font-size: 16px;
+  border-radius: 10px;
+}
+#boxDataBtnUpdate:hover {
+  background-color: var(--colorBtnHover);
+  border-color: var(--colorBtnHover);
+}
+
+/**********************************************************
+*  #boxSolution:                                          *
+*---------------------------------------------------------*
+* - #boxSolutionEdit                                      *
+***********************************************************/
+#boxSolution{ width: 290px; height: 110px;}
+#boxSolutionEdit {
+  width: 100%;
+  height: 70px;
+  text-align: center;
+  background-color: transparent;
+  border: 1px solid var(--colorGrid);
+  outline: none;
+  font-family: 'Courier', monospace;
+  font-size: 16px;
+}
+#boxSolutionEdit:focus {
+  background-color: var(--colorEdit) !important;
+  color: #000;
+  outline: none;
+}
+
+/**********************************************************
+*  #boxResult                                             *
+*---------------------------------------------------------*
+* - #boxResultTxt                                         *
+***********************************************************/
+#boxResult{ width: 290px; height: 110px;}
+#boxResultTxt {
+  font-family: 'Courier', monospace;
+  font-size: 48px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 10px;
+  color: #000;
+}
+
+/**************************************************
+***  boxDraft                                   ***
+***************************************************/
+#boxDraft{ width: 890px; height: 280px; padding: 0;}
+#drafCanvas {
+  cursor: pointer;
+}
+
+/**************************************************
+***  boxNotes                                   ***
+***************************************************/
+#boxNotes{ width: 890px; height: 260px;}
+#boxNotesTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 0;
+    width: 870px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+#boxNotesTable th, #boxNotesTable td {
+    border: 1px solid var(--colorGrid);
+    text-align: center;
+    height: 22px;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0 4px;
+}
+#boxNotesTable th {
+    height: 28px;
+    background-color: var(--colorHead);
+    font-weight: normal;
+    color: var(--colorText);
+}
+#boxNotesTable th:nth-child(1) { width: 50px;  }
+#boxNotesTable th:nth-child(2) { width: 50px;  }
+#boxNotesTable th:nth-child(3) { width: 50px;  }
+#boxNotesTable th:nth-child(4) { width: 50px;  }
+#boxNotesTable th:nth-child(5) { width: 50px;  }
+#boxNotesTable th:nth-child(6) { width: 200px; }
+#boxNotesTable th:nth-child(7) { width: 200px; }
+#boxNotesTable th:nth-child(8) { width: auto;  }
+/* --- Stylizacja STOPKI (tfoot) --- */
+.tfoot-row td {
+    background-color: var(--colorHead);
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Ukrywanie pionowych linii wewnątrz stopki */
+.tfoot-row td.td-empty {
+    border-right: none;
+    border-left: none;
+}
+
+/* Pierwsza komórka stopki musi mieć lewą ramkę */
+.tfoot-row td.td-empty:first-child {
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Ostatnia komórka z wynikiem - ma ramki i wyśrodkowany tekst */
+.tfoot-value {
+    border-left: none !important;
+    font-weight: bold;
+    color: var(--colorText);
+    text-align: center;
+}
+
+/* Wyróżnienie samej wartości Cmax wewnątrz komórek tabeli */
+.highlight-val {
+    color: inherit;        /* Przyjmuje kolor tekstu otoczenia (czarny/ciemny) */
+    font-weight: 900;      /* Bardzo mocne pogrubienie */
+    text-decoration: none; /* Usuwamy podkreślenie */
+}
