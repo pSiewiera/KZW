@@ -1,0 +1,38 @@
+﻿-------------------------------------------------------------------------------
+ocena 2.5:
+  - NEH dający do 10% przykładów inne wyniki niż w pliku porównawczym,
+-------------------------------------------------------------------------------
+ocena 3.0:
+  -  NEH bez akceleracji 
+-------------------------------------------------------------------------------
+ocena 3.5:
+  - NEH z niepełną akceleracją lub czasem powyżej 1s
+    (dotyczy wszystkich 120 instancji na komputerze z CPU i5 2.5GHz),
+-------------------------------------------------------------------------------
+ocena 4.0:
+  - NEH z akceleracją poniżej 1s
+    (dotyczy wszystkich 120 instancji na komputerze z CPU i5 2.5GHz),
+-------------------------------------------------------------------------------
+ocena 4.5:
+  - NEH z niepełną akceleracją lub czasem powyżej 1s + NEH bez akceleracji
+    (dotyczy wszystkich 120 instancji na komputerze z CPU i5 2.5GHz),
+  - badania porównawcze zamieszczone w sprawozdaniu,
+-------------------------------------------------------------------------------
+ocena 5.0:
+  - NEH z akceleracją i czasem poniżej 1s + NEH bez akceleracji
+    (dotyczy wszystkich 120 instancji na komputerze z CPU i5 2.5GHz),
+  - badania porównawcze zamieszczone w sprawozdaniu,
+-------------------------------------------------------------------------------
+ocena 5.5:
+  - NEH z akceleracją + NEH z akceleracją i modyfikacją czas 1s
+    (dotyczy wszystkich 120 instancji na komputerze z CPU i5 2.5GHz),
+  - naukowe podejście do badań porównawczych zamieszczonych w sprawozdaniu
+    przykładowe badania: 
+    otrzymane Cmax'y należy potraktować jak zmienne losowe i
+    postawić hipotezę, iż modyfikacja powoduje genrowananie Cmax'u
+    lepszego o daną wartość procentową niż, generowanie Cmaxu bez modyfikacji,
+    właściwa weryfikacja hipotezy przy ustalonym poziomie istotności,
+    patrz: estymatory wartości średniej, test studenta, statystyka testowa,
+    korelacja zmiennych losowych, istotność korelacji, poziom istotności, 
+    podstawy do odrzucenia hipotezy, brak podstaw do odrzucenia hipotezy.
+-------------------------------------------------------------------------------
