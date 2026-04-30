@@ -63,4 +63,5 @@ int main() {
             cout << "Cmax: " << Cmax << endl;
         }
     }
+    return 0;
 }
