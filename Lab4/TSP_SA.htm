@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>TSP:SA</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="TSP_SA_files/tsp_sa.css">
+    <script src="TSP_SA_files/tsp_sa.js" defer="defer"></script>
+  </head>
+
+  <body>
+      <div id="boxMain">
+        <div id="tytul">
+          Problem komiwojażera 2D<br>
+          <span class="btn" id="btnRand">Losuj dane</span>
+          <span class="btn" id="btnSA">Symulowane wyżarzanie</span>
+          <span class="btn" id="btnReport">Raport</span>
+        </div>
+        <div id="path">
+           <div id="txtPath">ścieżka</div>
+           <canvas id="canPath" width="440" height="240" style="width: 440px; height: 240px;"></canvas>
+        </div>
+        <div id="dist">
+           <div id="txtDist">długość</div>
+           <canvas id="canDist" width="440" height="240" style="width: 440px; height: 240px;"></canvas>
+        </div>
+        <div id="delta">
+          <div id="txtDelta">przyrost drogi: diagram</div>
+          <canvas id="canDelta" width="440" height="240" style="width: 440px; height: 240px;"></canvas>
+        </div>
+        <div id="temp">
+          <div id="txtTemp">temperatura: wykres</div>
+          <canvas id="canTemp" width="440" height="240" style="width: 440px; height: 240px;"></canvas>
+        </div>
+        <div id="pWykres">
+          <div id="txtPWykres">prawdopodobieństwa akceptacji: P(d)</div>
+          <canvas id="canPWykres" width="440" height="240" style="width: 440px; height: 240px;"></canvas>
+        </div>
+        <div id="praw">
+          <div id="txtPraw">prawdopodobieństwa akceptacji: diagram</div>
+          <canvas id="canPraw" width="440" height="240" style="width: 440px; height: 240px;"></canvas>
+        </div>
+        <input id="slider" type="range" max="402" value="199">
+        <br>
+      </div>
+    
+
+
+</body></html>
