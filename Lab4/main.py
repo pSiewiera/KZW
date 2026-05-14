@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 class TSP_SA:
     def __init__(self, num_nodes=40):
         self.num_nodes = num_nodes
-        # Losowanie miast (x: 0-100, y: 0-50) 
         self.nodes = [(random.randint(0, 100), random.randint(0, 50)) for _ in range(num_nodes)]
         self.path = list(range(num_nodes))
         random.shuffle(self.path)
@@ -36,7 +35,7 @@ class TSP_SA:
         new_path[a:b+1] = reversed(new_path[a:b+1])
         return new_path
 
-    def run_sa(self, iterations=100000, start_temp=2000):
+    def run_sa(self, iterations=100100, start_temp=2000):
         temp = start_temp
         cooling_rate = 0.99993 
         
@@ -67,9 +66,8 @@ class TSP_SA:
         print(f"Koniec. Dystans końcowy: {current_dist}")
         return iter_count, history
 
-# --- Uruchomienie i Wykres ---
 tsp = TSP_SA(40)
-iters, dists = tsp.run_sa(iterations=100000)
+iters, dists = tsp.run_sa(iterations=100100)
 
 plt.figure(figsize=(10, 6))
 plt.plot(iters, dists, color='#322', linewidth=2)
