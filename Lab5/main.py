@@ -17,3 +17,20 @@ class SA_TS:
         dx = node_a[0] - node_b[0]
         dy = node_a[1] - node_b[1]
         return math.floor(0.5 + math.sqrt(dx*dx + dy*dy))
+    
+    def get_path_dist(self, path):
+        """Oblicza całkowitą długość ścieżki"""
+        total = 0
+        for i in range(len(path) - 1):
+            total += self.get_dist(path[i], path[i+1])
+        return total
+    
+    def move_2opt(self, path):
+        """Zamiana segmentu trasy """
+        new_path = path[:]
+        a = random.randint(1, self.num_nodes - 1)
+        b = random.randint(1, self.num_nodes - 1)
+        if a > b: a, b = b, a
+        
+        new_path[a:b+1] = reversed(new_path[a:b+1])
+        return new_path
