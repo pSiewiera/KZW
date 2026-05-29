@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import time
 
-NUM_NODES = 40
-STEPS = 1000
-SA_TEMP_START = 10000
+NUM_NODES = 50
+TIME_LIMIT = 180.0  
+SA_TEMP_START = 10000.0
 SA_TEMP_ALPHA = 0.99
 TS_TABU_SIZE = 32
 
@@ -50,7 +51,7 @@ def sa_step(path, temp, nodes, sa_best_dist, sa_best_path):
         if c1 <= c0 or akce:
             c0 = c1
         else:
-            path_move(path, move)
+            path_move(path, move) 
         if sa_best_dist > c0:
             sa_best_dist = c0
             sa_best_path = list(path)
@@ -90,7 +91,7 @@ def ts_find_best_move(path, nodes, tabu_list, ts_best_dist, ts_best_path):
             if ts_best_dist > best_dist:
                 ts_best_dist = best_dist
                 ts_best_path = list(path)
-            path_move(path, (a, b))
+            path_move(path, (a, b)) 
     return (best_a, best_b), ts_best_dist, ts_best_path
 
 def rand_path(n):
@@ -102,30 +103,49 @@ def rand_path(n):
 
 start_path = rand_path(NUM_NODES)
 start_dist = path_dist(start_path, nodes)
+
 sa_path = list(start_path)
 ts_path = list(start_path)
-sa_data_dist = [start_dist]
-ts_data_dist = [start_dist]
+
 sa_best_dist = start_dist
 sa_best_path = list(start_path)
 ts_best_dist = start_dist
 ts_best_path = list(start_path)
+
 ts_tabu = []
 sa_temp = SA_TEMP_START
 
-for step in range(STEPS):
+sa_history = [(0.0, start_dist)]
+ts_history = [(0.0, start_dist)]
+
+print(f"Rozpoczynam obliczenia z limitem {TIME_LIMIT}s na algorytm...")
+
+print("Trwa uruchamianie SA...")
+sa_start_time = time.time()
+while True:
+    current_time = time.time() - sa_start_time
+    if current_time >= TIME_LIMIT:
+        break    
     sa_best_dist, sa_best_path = sa_step(sa_path, sa_temp, nodes, sa_best_dist, sa_best_path)
     sa_temp *= SA_TEMP_ALPHA
-    sa_data_dist.append(path_dist(sa_path, nodes))
+    
+    sa_history.append((current_time, path_dist(sa_path, nodes)))
+
+print("Trwa uruchamianie TS...")
+ts_start_time = time.time()
+while True:
+    current_time = time.time() - ts_start_time
+    if current_time >= TIME_LIMIT:
+        break
+        
     move, ts_best_dist, ts_best_path = ts_find_best_move(ts_path, nodes, ts_tabu, ts_best_dist, ts_best_path)
     ts_add_move_tabu(ts_path, move, ts_tabu, TS_TABU_SIZE)
     path_move(ts_path, move)
-    ts_data_dist.append(path_dist(ts_path, nodes))
+    
+    ts_history.append((current_time, path_dist(ts_path, nodes)))
 
 sa_path = sa_best_path
 ts_path = ts_best_path
-sa_data_dist.append(sa_best_dist)
-ts_data_dist.append(ts_best_dist)
 
 with open("sciezki.txt", "w") as f:
     f.write(f"SA_BEST_DIST: {sa_best_dist}\n")
@@ -154,13 +174,22 @@ plt.close(fig_maps)
 fig_graphs, axs_graphs = plt.subplots(1, 2, figsize=(12, 5))
 fig_graphs.patch.set_facecolor('white')
 
-axs_graphs[0].plot(sa_data_dist, color='red')
-axs_graphs[0].set_title("SA: długość w czasie", color='black')
+sa_times = [h[0] for h in sa_history]
+sa_dists = [h[1] for h in sa_history]
+ts_times = [h[0] for h in ts_history]
+ts_dists = [h[1] for h in ts_history]
+
+axs_graphs[0].plot(sa_times, sa_dists, color='red')
+axs_graphs[0].set_title("SA: długość funkcji czasu", color='black')
+axs_graphs[0].set_xlabel("Czas [s]")
+axs_graphs[0].set_ylabel("Dystans")
 axs_graphs[0].set_facecolor('white')
 axs_graphs[0].grid(True, color='lightgray')
 
-axs_graphs[1].plot(ts_data_dist, color='red')
-axs_graphs[1].set_title("TS: długość w czasie", color='black')
+axs_graphs[1].plot(ts_times, ts_dists, color='red')
+axs_graphs[1].set_title("TS: długość w funkcji czasu", color='black')
+axs_graphs[1].set_xlabel("Czas [s]")
+axs_graphs[1].set_ylabel("Dystans")
 axs_graphs[1].set_facecolor('white')
 axs_graphs[1].grid(True, color='lightgray')
 
